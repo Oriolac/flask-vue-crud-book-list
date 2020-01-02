@@ -1,9 +1,10 @@
 <template>
-  <div class="container">
-    <div class="row">
+  <b-container>
+    <b-row>
       <div class="col-sm-10">
         <h1>Books</h1>
         <hr><br><br>
+        <alert :message="message" v-if="showMessage"></alert>
         <button type="button" class="btn btn-success btn-sm" v-b-modal.book-modal>Add Book</button>
         <br><br>
         <table class="table table-hover">
@@ -33,46 +34,47 @@
           </tbody>
         </table>
       </div>
-    </div>
     <b-modal ref="addBookModal"
          id="book-modal"
          title="Add a new book"
          hide-footer>
-  <b-form @submit="onSubmit" @reset="onReset" class="w-100">
-  <b-form-group id="form-title-group"
-                label="Title:"
-                label-for="form-title-input">
-      <b-form-input id="form-title-input"
-                    type="text"
-                    v-model="addBookForm.title"
-                    required
-                    placeholder="Enter title">
-      </b-form-input>
-    </b-form-group>
-    <b-form-group id="form-author-group"
-                  label="Author:"
-                  label-for="form-author-input">
-        <b-form-input id="form-author-input"
-                      type="text"
-                      v-model="addBookForm.author"
-                      required
-                      placeholder="Enter author">
-        </b-form-input>
-      </b-form-group>
-    <b-form-group id="form-read-group">
-      <b-form-checkbox-group v-model="addBookForm.read" id="form-checks">
-        <b-form-checkbox value="true">Read?</b-form-checkbox>
-      </b-form-checkbox-group>
-    </b-form-group>
-    <b-button type="submit" variant="primary">Submit</b-button>
-    <b-button type="reset" variant="danger">Reset</b-button>
-  </b-form>
-</b-modal>
-  </div>
+      <b-form @submit="onSubmit" @reset="onReset" class="w-100">
+      <b-form-group id="form-title-group"
+                    label="Title:"
+                    label-for="form-title-input">
+          <b-form-input id="form-title-input"
+                        type="text"
+                        v-model="addBookForm.title"
+                        required
+                        placeholder="Enter title">
+          </b-form-input>
+        </b-form-group>
+        <b-form-group id="form-author-group"
+                      label="Author:"
+                      label-for="form-author-input">
+            <b-form-input id="form-author-input"
+                          type="text"
+                          v-model="addBookForm.author"
+                          required
+                          placeholder="Enter author">
+            </b-form-input>
+          </b-form-group>
+        <b-form-group id="form-read-group">
+          <b-form-checkbox-group v-model="addBookForm.read" id="form-checks">
+            <b-form-checkbox value="true">Read?</b-form-checkbox>
+          </b-form-checkbox-group>
+        </b-form-group>
+        <b-button type="submit" variant="primary">Submit</b-button>
+        <b-button type="reset" variant="danger">Reset</b-button>
+      </b-form>
+    </b-modal>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
 import axios from 'axios';
+import Alert from './Alert.vue';
 
 export default {
   data() {
@@ -83,7 +85,12 @@ export default {
         author: '',
         read: [],
       },
+      message: '',
+      showMessage: false,
     };
+  },
+  components: {
+    alert: Alert,
   },
   methods: {
     getBooks() {
@@ -102,6 +109,8 @@ export default {
       axios.post(path, payload)
         .then(() => {
           this.getBooks();
+          this.message = 'Book added!';
+          this.showMessage = true;
         })
         .catch((error) => {
           // eslint-disable-next-line
